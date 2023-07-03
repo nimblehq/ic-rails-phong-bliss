@@ -31,6 +31,8 @@ gem 'omniauth-rails_csrf_protection' # mitigation against OmniAuth Cross-Site Re
 gem 'rails-i18n' # Translations for Rails
 # gem 'devise-i18n' # Translations for Devise
 
+gem 'grover'
+
 group :development do
   gem 'foreman' # Manage Procfile-based applications
   gem 'better_errors' # Better error page for Rails and other Rack apps

@@ -1,0 +1,7 @@
+{
+  "name": "ic_rails_phong_bliss",
+  "private": true,
+  "dependencies": {
+    "puppeteer": "19.7.1"
+  }
+}

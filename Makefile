@@ -7,6 +7,7 @@ dev:
 	make env/setup
 	bundle exec ./bin/dev
 
+
 env/setup:
 	bundle exec ./bin/envsetup.sh
 	bundle exec rails db:prepare
@@ -16,9 +17,10 @@ env/teardown:  # this command will delete data
 
 install-dependencies:
 	bundle install
+	yarn install
 
 codebase:
 	bundle exec rubocop
-	
+
 codebase/fix:
 	bundle exec rubocop -a

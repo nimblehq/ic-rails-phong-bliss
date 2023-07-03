@@ -23,6 +23,7 @@ services:
       args:
         - BUILD_ENV=production
         - RUBY_ENV=production
+        - NODE_ENV=production
     image: ${DOCKER_REGISTRY_HOST}/${DOCKER_IMAGE}:${BRANCH_TAG}
     container_name: google_search_ruby_web
     command: bin/start.sh
@@ -37,6 +38,7 @@ services:
     environment:
       - RACK_ENV=production
       - RAILS_ENV=production
+      - NODE_ENV=production
       - DATABASE_URL=postgres://postgres@db/google_search_ruby_production
       - DEFAULT_HOST
       - MAILER_SENDER

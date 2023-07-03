@@ -16,6 +16,7 @@ Rails.application.routes.draw do
       resources :keywords, only: [:index, :create, :show]
       resources :registrations, only: [:create]
       resources :tokens, only: [:create]
+      resources :downloads, only: [:index]
     end
   end
 

@@ -13,12 +13,33 @@ ENV BUILD_ENV=$BUILD_ENV \
     BUNDLE_PATH="/bundle" \
     LANG="en_US.UTF-8" \
     LC_ALL="en_US.UTF-8" \
-    LANGUAGE="en_US:en"
+    LANGUAGE="en_US:en" \
+    NODE_ENV=$NODE_ENV \
+    NODE_VERSION=20
 
 RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends apt-transport-https curl gnupg net-tools && \
     apt-get install -y --no-install-recommends build-essential libpq-dev && \
     apt-get install -y --no-install-recommends rsync locales chrpath pkg-config libfreetype6 libfontconfig1 git cmake wget unzip && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install yarn
+ADD https://dl.yarnpkg.com/debian/pubkey.gpg /tmp/yarn-pubkey.gpg
+RUN apt-key add /tmp/yarn-pubkey.gpg && rm /tmp/yarn-pubkey.gpg && \
+    echo "deb http://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list && \
+    curl -sL https://deb.nodesource.com/setup_"$NODE_VERSION".x | bash - && \
+    apt-get update -qq && \
+    apt-get install -y --no-install-recommends nodejs yarn && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set up the Chrome PPA and install Chrome Headless
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' >> /etc/apt/sources.list.d/google-chrome.list && \
+    apt-get update -qq && \
+    apt-get install -y --no-install-recommends google-chrome-stable && \
+    rm /etc/apt/sources.list.d/google-chrome.list && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -49,6 +70,10 @@ RUN gem install bundler && \
       bundle config set without 'development test' ; \
     fi && \
     bundle install
+
+# Install JS dependencies
+COPY package.json yarn.lock .yarnrc ./
+RUN yarn install --network-timeout 100000
 
 # Copying the app files must be placed after the dependencies setup
 # since the app files always change thus cannot be cached
