@@ -10,7 +10,13 @@ module Api
 
       before_action :doorkeeper_authorize!
 
+      rescue_from ActionController::ParameterMissing, with: :handle_parameter_missing
+
       private
+
+      def handle_parameter_missing(exception)
+        render json: { error: exception.message }, status: :bad_request
+      end
 
       def current_user
         @current_user ||= User.find_by(id: doorkeeper_token[:resource_owner_id])

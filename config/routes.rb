@@ -16,7 +16,7 @@ Rails.application.routes.draw do
       resources :private_items, only: :index
       resources :tokens, only: [:create]
       resources :registrations, only: [:create]
-      resources :search_results, only: [:index]
+      resources :search_keywords, only: [:index]
     end
   end
 
