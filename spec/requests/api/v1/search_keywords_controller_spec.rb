@@ -18,57 +18,117 @@ RSpec.describe Api::V1::SearchKeywordsController, type: :request do
           expect(response).to have_http_status(:success)
         end
 
-        context 'given there are adword urls contain the keyword VPN' do
-          it 'returns 2 keywords contains the matched urls' do
-            user = Fabricate(:user)
-            ads_top_urls = ['https://www.thetopvpn.com', 'https://www.nordvpn.com', 'https://www.vnexpress.net']
-            Fabricate(:keyword, ads_top_urls: ads_top_urls, user: user)
+        context 'when searching for keywords with adwords_url VPN' do
+          context 'given there are adword urls contain the keyword VPN' do
+            it 'returns 2 keywords contains the matched urls' do
+              user = Fabricate(:user)
+              ads_top_urls = ['https://www.thetopvpn.com', 'https://www.nordvpn.com', 'https://www.vnexpress.net']
+              Fabricate(:keyword, ads_top_urls: ads_top_urls, user: user)
 
-            params = { filter: { adwords_url_contains: 'VPN' }, page: 1, per_page: 1 }
-            get api_v1_search_keywords_path, params: params, headers: create_token_header(user)
+              params = { filter: { adwords_url_contains: 'VPN' }, page: 1, per_page: 1 }
+              get api_v1_search_keywords_path, params: params, headers: create_token_header(user)
 
-            response_body = JSON.parse(response.body, symbolize_names: true)
-            expect(response_body[:data][0][:attributes][:ads_top_urls]).to eq(['https://www.thetopvpn.com', 'https://www.nordvpn.com'])
+              response_body = JSON.parse(response.body, symbolize_names: true)
+              expect(response_body[:data][0][:attributes][:ads_top_urls]).to eq(['https://www.thetopvpn.com', 'https://www.nordvpn.com'])
+            end
+
+            it 'returns metadata with page = 1, per_page = 1 and total_item = 1' do
+              user = Fabricate(:user)
+              ads_top_urls = ['https://www.thetopvpn.com', 'https://www.nordvpn.com', 'https://www.vnexpress.net']
+              Fabricate(:keyword, ads_top_urls: ads_top_urls, user: user)
+
+              params = { filter: { adwords_url_contains: 'VPN' }, page: 1, per_page: 1 }
+              get api_v1_search_keywords_path, params: params, headers: create_token_header(user)
+
+              response_body = JSON.parse(response.body, symbolize_names: true)
+
+              expect(response_body[:meta]).to eq(page: 1, per_page: 1, total_items: 1)
+            end
           end
 
-          it 'returns metadata with page = 1, per_page = 1 and total_item = 1' do
-            user = Fabricate(:user)
-            ads_top_urls = ['https://www.thetopvpn.com', 'https://www.nordvpn.com', 'https://www.vnexpress.net']
-            Fabricate(:keyword, ads_top_urls: ads_top_urls, user: user)
+          context 'given there is no adword url contains the keyword VPN' do
+            it 'returns an empty array' do
+              user = Fabricate(:user)
+              ads_top_urls = ['https://www.google.com', 'https://www.bing.com', 'https://www.vnexpress.net']
+              Fabricate(:keyword, ads_top_urls: ads_top_urls, user: user)
 
-            params = { filter: { adwords_url_contains: 'VPN' }, page: 1, per_page: 1 }
-            get api_v1_search_keywords_path, params: params, headers: create_token_header(user)
+              params = { filter: { adwords_url_contains: 'VPN' }, page: 1, per_page: 1 }
+              get api_v1_search_keywords_path, params: params, headers: create_token_header(user)
 
-            response_body = JSON.parse(response.body, symbolize_names: true)
+              response_body = JSON.parse(response.body, symbolize_names: true)
+              expect(response_body[:data]).to be_empty
+            end
 
-            expect(response_body[:meta]).to eq(page: 1, per_page: 1, total_items: 1)
+            it 'returns metadata with page = 1, per_page = 1 and total_items = 0' do
+              user = Fabricate(:user)
+              ads_top_urls = ['https://www.google.com', 'https://www.bing.com', 'https://www.vnexpress.net']
+              Fabricate(:keyword, ads_top_urls: ads_top_urls, user: user)
+
+              params = { filter: { adwords_url_contains: 'VPN' }, page: 1, per_page: 1 }
+              get api_v1_search_keywords_path, params: params, headers: create_token_header(user)
+
+              response_body = JSON.parse(response.body, symbolize_names: true)
+
+              expect(response_body[:meta]).to eq(page: 1, per_page: 1, total_items: 0)
+            end
           end
         end
 
-        context 'given there is no adword url contains the keyword VPN' do
-          it 'returns an empty array' do
-            user = Fabricate(:user)
-            ads_top_urls = ['https://www.google.com', 'https://www.bing.com', 'https://www.vnexpress.net']
-            Fabricate(:keyword, ads_top_urls: ads_top_urls, user: user)
+        context 'when searching for keywords with result_url vpn' do
+          context 'given there are 2 keywords with result urls contain the keyword vpn' do
+            it 'returns 2 keywords contains the matched urls' do
+              user = Fabricate(:user)
+              result_urls = ['https://www.thetopvpn.com']
+              Fabricate.times(2, :keyword, result_urls: result_urls, user: user)
 
-            params = { filter: { adwords_url_contains: 'VPN' }, page: 1, per_page: 1 }
-            get api_v1_search_keywords_path, params: params, headers: create_token_header(user)
+              params = { filter: { result_url_contains: 'vpn' }, page: 1, per_page: 2 }
+              get api_v1_search_keywords_path, params: params, headers: create_token_header(user)
 
-            response_body = JSON.parse(response.body, symbolize_names: true)
-            expect(response_body[:data]).to be_empty
+              response_body = JSON.parse(response.body, symbolize_names: true)
+              expect(response_body[:data].count).to be(2)
+            end
+
+            it 'returns metadata with page = 1, per_page = 1 and total_item = 2' do
+              user = Fabricate(:user)
+              result_urls = ['https://www.thetopvpn.com']
+              Fabricate.times(2, :keyword, result_urls: result_urls, user: user)
+
+              params = { filter: { result_url_contains: 'vpn' }, page: 1, per_page: 1 }
+              get api_v1_search_keywords_path, params: params, headers: create_token_header(user)
+
+              response_body = JSON.parse(response.body, symbolize_names: true)
+              expect(response_body[:meta]).to eq(page: 1, per_page: 1, total_items: 2)
+            end
           end
+        end
 
-          it 'returns metadata with page = 1, per_page = 1 and total_items = 0' do
-            user = Fabricate(:user)
-            ads_top_urls = ['https://www.google.com', 'https://www.bing.com', 'https://www.vnexpress.net']
-            Fabricate(:keyword, ads_top_urls: ads_top_urls, user: user)
+        context 'when searching for keywords with adwords_url VPN and result_url game' do
+          context 'given there are 2 keywords with adwords_url containing VPN and result_url containing the keyword game' do
+            it 'returns 2 keywords contains the matched urls' do
+              user = Fabricate(:user)
+              ads_top_urls = ['https://www.thetopvpn.com']
+              result_urls = ['https://www.game.com']
+              Fabricate.times(2, :keyword, ads_top_urls: ads_top_urls, result_urls: result_urls, user: user)
 
-            params = { filter: { adwords_url_contains: 'VPN' }, page: 1, per_page: 1 }
-            get api_v1_search_keywords_path, params: params, headers: create_token_header(user)
+              params = { filter: { adwords_url_contains: 'vpn', result_url_contains: 'game' }, page: 1, per_page: 2 }
+              get api_v1_search_keywords_path, params: params, headers: create_token_header(user)
 
-            response_body = JSON.parse(response.body, symbolize_names: true)
+              response_body = JSON.parse(response.body, symbolize_names: true)
+              expect(response_body[:data].count).to be(2)
+            end
 
-            expect(response_body[:meta]).to eq(page: 1, per_page: 1, total_items: 0)
+            it 'returns metadata with page = 1, per_page = 1 and total_item = 2' do
+              user = Fabricate(:user)
+              ads_top_urls = ['https://www.thetopvpn.com']
+              result_urls = ['https://www.game.com']
+              Fabricate.times(2, :keyword, ads_top_urls: ads_top_urls, result_urls: result_urls, user: user)
+
+              params = { filter: { adwords_url_contains: 'vpn', result_url_contains: 'game' }, page: 1, per_page: 2 }
+              get api_v1_search_keywords_path, params: params, headers: create_token_header(user)
+
+              response_body = JSON.parse(response.body, symbolize_names: true)
+              expect(response_body[:meta]).to eq(page: 1, per_page: 1, total_items: 2)
+            end
           end
         end
       end

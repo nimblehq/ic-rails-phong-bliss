@@ -22,7 +22,7 @@ module Api
       end
 
       def search_params
-        params.require(:filter).permit(:adwords_url_contains)
+        params.require(:filter).permit(:adwords_url_contains, :result_url_contains)
       end
     end
   end

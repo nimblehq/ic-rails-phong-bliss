@@ -14,7 +14,6 @@ class SearchKeywordsForm < ApplicationForm
   def search_keywords
     pagination_params[:page] ||= 1
     pagination_params[:items] ||= 10
-    return empty_pagination unless search_params[:adwords_url_contains]
 
     keywords_has_ads_top_urls_contains_word
   end
@@ -24,6 +23,9 @@ class SearchKeywordsForm < ApplicationForm
   def keywords_has_ads_top_urls_contains_word
     pagination, paginated_keywords = pagy(keywords_query.call, pagination_params)
     word_params = search_params[:adwords_url_contains]
+
+    return [pagination, paginated_keywords] unless word_params
+
     filtered_paginated_keywords = paginated_keywords.map { |item| filter_unmatched_adword_urls(item, word_params) }
     [pagination, filtered_paginated_keywords]
   end
@@ -32,13 +34,6 @@ class SearchKeywordsForm < ApplicationForm
     unfiltered_urls = keyword.ads_top_urls
     keyword.ads_top_urls = unfiltered_urls.select { |item| item.downcase.include?(word_params.downcase) }
     keyword
-  end
-
-  def empty_pagination
-    [
-      Pagy.new(page: pagination_params[:page], items: pagination_params[:items], count: 0),
-      []
-    ]
   end
 
   def keywords_query
