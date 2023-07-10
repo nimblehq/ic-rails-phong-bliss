@@ -1,7 +1,10 @@
 {
   "name": "ic_rails_phong_bliss",
-  "private": true,
+  "private": "true",
+  "engines": {
+    "node": "^20"
+  },
   "dependencies": {
-    "puppeteer": "19.7.1"
+    "puppeteer": "20.7.4"
   }
 }

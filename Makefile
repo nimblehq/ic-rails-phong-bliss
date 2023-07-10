@@ -7,7 +7,6 @@ dev:
 	make env/setup
 	bundle exec ./bin/dev
 
-
 env/setup:
 	bundle exec ./bin/envsetup.sh
 	bundle exec rails db:prepare

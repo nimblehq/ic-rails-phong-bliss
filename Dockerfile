@@ -24,6 +24,15 @@ RUN apt-get update -qq && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Set up the Chrome PPA and install Chrome Headless
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' >> /etc/apt/sources.list.d/google-chrome.list && \
+    apt-get update -qq && \
+    apt-get install -y --no-install-recommends google-chrome-stable && \
+    rm /etc/apt/sources.list.d/google-chrome.list && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Install yarn
 ADD https://dl.yarnpkg.com/debian/pubkey.gpg /tmp/yarn-pubkey.gpg
 RUN apt-key add /tmp/yarn-pubkey.gpg && rm /tmp/yarn-pubkey.gpg && \
@@ -31,15 +40,6 @@ RUN apt-key add /tmp/yarn-pubkey.gpg && rm /tmp/yarn-pubkey.gpg && \
     curl -sL https://deb.nodesource.com/setup_"$NODE_VERSION".x | bash - && \
     apt-get update -qq && \
     apt-get install -y --no-install-recommends nodejs yarn && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Set up the Chrome PPA and install Chrome Headless
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' >> /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get update -qq && \
-    apt-get install -y --no-install-recommends google-chrome-stable && \
-    rm /etc/apt/sources.list.d/google-chrome.list && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -73,12 +73,11 @@ RUN gem install bundler && \
 
 # Install JS dependencies
 COPY package.json yarn.lock .yarnrc ./
-RUN yarn install --network-timeout 100000
+RUN yarn install
 
 # Copying the app files must be placed after the dependencies setup
 # since the app files always change thus cannot be cached
 COPY . ./
-
 # Remove tmp/docker in the final image
 RUN rm -rf tmp/docker
 
