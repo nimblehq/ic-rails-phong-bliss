@@ -15,7 +15,20 @@ ENV BUILD_ENV=$BUILD_ENV \
     LC_ALL="en_US.UTF-8" \
     LANGUAGE="en_US:en" \
     NODE_ENV=$NODE_ENV \
-    NODE_VERSION=20
+    NODE_VERSION=20 \
+    AVAILABLE_LOCALES="en" \
+    DATABASE_URL="postgres://yurtoicscbglrx:c7c4edbf14b3b8b489fe4bc87ab212e3eabdc538b491e98ab2ef247c69c293e7@ec2-3-234-204-26.compute-1.amazonaws.com:5432/dcsosoect0d24n" \
+    DEFAULT_LOCALE="en" \
+    FALLBACK_LOCALES="en" \
+    MAILER_DEFAULT_HOST="rails-ic-phong-bliss-staging.herokuapp.com" \
+    MAILER_DEFAULT_PORT="80" \
+    MAILER_SENDER="Test <noreplyrailsic@gmail.com>" \
+    RAILS_LOG_TO_STDOUT="true" \
+    RAILS_MASTER_KEY="867ef18d82fbfeaa8a4342a1845d7563" \
+    REDIS_TLS_URL="rediss://:pc46c6ac087628da38d8183c00a8b37822d5fdf1bf98b5b11f769e23453997f3e@ec2-54-174-37-64.compute-1.amazonaws.com:22910" \
+    REDIS_URL="redis://:pc46c6ac087628da38d8183c00a8b37822d5fdf1bf98b5b11f769e23453997f3e@ec2-54-174-37-64.compute-1.amazonaws.com:22909" \
+    SMTP_MAIL_SERVER="smtp.gmail.com" \
+    SMTP_PORT="587"
 
 RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends apt-transport-https curl gnupg net-tools && \
