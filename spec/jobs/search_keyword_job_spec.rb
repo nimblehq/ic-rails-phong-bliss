@@ -6,7 +6,7 @@ RSpec.describe SearchKeywordJob, type: :job do
   include ActiveJob::TestHelper
 
   describe '#perform' do
-    context 'given search engine is Google' do
+    context 'given Google is search engine' do
       context 'given a valid request' do
         it 'saves 3 as ads_top_count' do
           stub_request(:get, %r{google.com/search}).to_return(body: file_fixture('html/valid_google.html').read)
@@ -142,7 +142,7 @@ RSpec.describe SearchKeywordJob, type: :job do
       end
     end
 
-    context 'given search engine is Bing' do
+    context 'given Bing is search engine' do
       context 'given a valid request' do
         it 'saves 2 as ads_top_count' do
           stub_request(:get, %r{bing.com/search}).to_return(body: file_fixture('html/valid_bing.html').read)

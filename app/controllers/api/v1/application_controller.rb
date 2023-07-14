@@ -10,7 +10,13 @@ module Api
 
       before_action :doorkeeper_authorize!
 
+      rescue_from ActionController::ParameterMissing, with: :handle_parameter_missing
+
       private
+
+      def handle_parameter_missing(exception)
+        render_errors(details: [exception.message], status: :bad_request)
+      end
 
       def current_user
         @current_user ||= User.find_by(id: doorkeeper_token[:resource_owner_id])
@@ -30,8 +36,8 @@ module Api
 
       def pagination_params
         {
-          page: params[:page],
-          items: params[:per_page]
+          page: params[:page] || Pagy::DEFAULT[:page],
+          items: params[:per_page] || Pagy::DEFAULT[:items]
         }
       end
 
