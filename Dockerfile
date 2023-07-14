@@ -15,7 +15,8 @@ ENV BUILD_ENV=$BUILD_ENV \
     LC_ALL="en_US.UTF-8" \
     LANGUAGE="en_US:en" \
     NODE_ENV=$NODE_ENV \
-    NODE_VERSION=20
+    NODE_VERSION=20 \
+    PUPPETEER_EXECUTABLE_PATH="/usr/bin/google-chrome"
 
 RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends apt-transport-https curl gnupg net-tools && \
