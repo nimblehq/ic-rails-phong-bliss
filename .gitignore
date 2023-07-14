@@ -44,3 +44,5 @@
 spec/examples.txt
 vendor
 .byebug_history
+node_modules
+.cache
